@@ -17,7 +17,12 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
+from charity_donation import views
 
 urlpatterns = [
-    path('', admin.site.urls),
+    path('admin', admin.site.urls),
+    path('', views.LandingPageView.as_view(), name='landing-page'),
+    path('add-donation/', views.AddDonationView.as_view(), name='add-donation'),
+    path('login/', views.LoginView.as_view(), name='login'),
+    path('register/', views.RegisterView.as_view(), name='register'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
