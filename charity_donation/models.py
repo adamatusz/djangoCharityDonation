@@ -5,10 +5,10 @@ from django.db import models
 
 
 class TypeChoice(models.IntegerChoices):
-    Foundation = 1
-    NGO = 2
-    Local = 3
-    __empty__ = 'Fundation'
+    foundation = 1
+    ngo = 2
+    local = 3
+    __empty__ = 'Foundation'
 
 
 class Category(models.Model):
@@ -23,7 +23,7 @@ class Institution(models.Model):
 
 
 class Donation(models.Model):
-    quantity = models.IntegerField()
+    quantity = models.IntegerField(verbose_name='liczba worków')
     categories = models.ManyToManyField(Category, blank=True)
     institution = models.ForeignKey(Institution,
                                     on_delete=models.CASCADE,

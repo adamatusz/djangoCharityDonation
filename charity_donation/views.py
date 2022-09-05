@@ -9,11 +9,12 @@ from charity_donation.models import Institution, Donation
 
 class LandingPageView(View):
     def get(self, request):
-        institutions = Institution.objects.all().count()
-        total_donated = Donation.objects.all().aggregate(Sum('quantity'))
+        donated_institutions = Institution.objects.all().filter(donation__quantity__gt=0).distinct().count()
+        total_donated = Donation.objects.all().count()
+        # total_donated = Donation.objects.all().aggregate(Sum('quantity'))
 
         context = {
-            "institutions": institutions,
+            "donated_institutions": donated_institutions,
             'total_donated': total_donated
         }
 

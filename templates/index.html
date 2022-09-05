@@ -1,9 +1,9 @@
-{%  extends 'base.html' %}
+{%  extends 'website/base.html' %}
     {% load static %}
 
 {% block content %}
 <header class="header--main-page">
-    {% include "navbar.html" %}
+    {% include "website/navbar.html" %}
         <div class="slogan container container--90">
         <div class="slogan--item">
           <h1>
@@ -17,13 +17,13 @@
     <section id="stats" class="stats">
       <div class="container container--85">
         <div class="stats--item">
-          <em>10</em>
+          <em>{{ total_donated }}</em>
           <h3>Oddanych worków</h3>
           <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius est beatae, quod accusamus illum tempora!</p>
         </div>
 
         <div class="stats--item">
-          <em>5</em>
+          <em>{{ donated_institutions }}</em>
           <h3>Wspartych organizacji</h3>
           <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laboriosam magnam, sint nihil cupiditate quas quam.</p>
         </div>
