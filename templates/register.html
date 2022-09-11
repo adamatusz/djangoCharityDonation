@@ -6,33 +6,39 @@
             {% include "website/navbar.html" %}
     </header>
 
-
-    <section class="login-page">
+<section class="login-page">
       <h2>Załóż konto</h2>
-      <form>
-{#          {% csrf_token %}#}
-        <div class="form-group">
-          <input type="text" name="name" placeholder="Imię" />
-        </div>
-         <div class="form-group">
-          <input type="text" name="surname" placeholder="Nazwisko" />
-        </div>
-        <div class="form-group">
-          <input type="email" name="email" placeholder="Email" />
-        </div>
-        <div class="form-group">
-          <input type="password" name="password" placeholder="Hasło" />
-        </div>
-        <div class="form-group">
-          <input type="password" name="password2" placeholder="Powtórz hasło" />
-        </div>
+
+<div class="form-group">
+      <form method="post" action="{% url 'register' %}" >
+          {% csrf_token %}
+
+         <div class="form-group">{{ form.as_p }}</div>
+      </form>
+</div>
+{#        <div class="form-group">#}
+{#          <input type="text" name="name" placeholder="Imię" />#}
+{#        </div>#}
+{#         <div class="form-group">#}
+{#          <input type="text" name="surname" placeholder="Nazwisko" />#}
+{#        </div>#}
+{#        <div class="form-group">#}
+{#          <input type="email" name="email" placeholder="Email" />#}
+{#        </div>#}
+{#        <div class="form-group">#}
+{#          <input type="password" name="password" placeholder="Hasło" />#}
+{#        </div>#}
+{#        <div class="form-group">#}
+{#          <input type="password" name="password2" placeholder="Powtórz hasło" />#}
+{#        </div>#}
 
         <div class="form-group form-group--buttons">
-          <a href="{% url "login" %}" class="btn btn--without-border">Zaloguj się</a>
-          <button class="btn" type="submit">Załóż konto</button>
+            <button class="btn btn--small" type="submit">Załóż konto</button><br/><br/>
+          <a href="{% url "login" %}" class="btn btn--small">Zaloguj się</a>
+
         </div>
-      </form>
-    </section>
+
+</section>
 
 
 {% endblock %}
