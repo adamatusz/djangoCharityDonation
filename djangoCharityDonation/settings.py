@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'charity_donation'
 ]
 
+# changes the built-in user model to ours
+AUTH_USER_MODEL = 'charity_donation.User'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
