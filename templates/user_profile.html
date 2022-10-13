@@ -1,0 +1,20 @@
+{% extends "website/base.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+<body>
+{% block content %}
+
+        <h2>Profil Użytkownika</h2>
+
+    {%  if user.is_authenticated %}
+
+        <p style="font-family: times, fantasy; font-size:14pt">imię i nazwisko: {{ user.first_name }} {{ user.last_name }}</p>
+        <p style="font-family: times, fantasy; font-size:14pt">adres email: {{ user.email }}</p>
+{#        <p>is_active: {{ user.is_active }}</p>#}
+
+    {% endif %}
+
+{% endblock %}
+</body>
+</html>

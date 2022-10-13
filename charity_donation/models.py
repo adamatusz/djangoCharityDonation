@@ -3,42 +3,6 @@ from django.contrib.auth.models import (AbstractBaseUser,
 from django.db import models
 
 # Create your models here.
-
-
-class TypeChoice(models.IntegerChoices):
-    foundation = 1
-    ngo = 2
-    local = 3
-    __empty__ = 'Foundation'
-
-
-class Category(models.Model):
-    name = models.CharField(max_length=150, unique=True)
-
-
-class Institution(models.Model):
-    name = models.CharField(max_length=250, unique=True)
-    description = models.TextField()
-    type = models.IntegerField(choices=TypeChoice.choices, default='Foundation', null=True, blank=True)
-    categories = models.ManyToManyField(Category, blank=True)
-
-
-class Donation(models.Model):
-    quantity = models.IntegerField(verbose_name='liczba worków')
-    categories = models.ManyToManyField(Category, blank=True)
-    institution = models.ForeignKey(Institution,
-                                    on_delete=models.CASCADE,
-                                    null=True)
-    address = models.CharField(max_length=256)
-    phone_number = models.CharField(max_length=16, verbose_name='numer telefonu')
-    city = models.CharField(max_length=128, verbose_name='miasto')
-    zip_code = models.CharField(max_length=6, verbose_name='kod pocztowy')
-    pick_up_date = models.DateField(auto_now_add=True, verbose_name='data odbioru')
-    pick_up_time = models.DateTimeField(auto_now_add=True, verbose_name='godzina odbioru')
-    pick_up_comment = models.TextField(null=True)
-#   user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-
-
 # https://www.codingforentrepreneurs.com/blog/how-to-create-a-custom-django-user-model/
 
 class UserManager(BaseUserManager):
@@ -106,14 +70,15 @@ class User(AbstractBaseUser):
     first_name = models.CharField(max_length=30, blank=True, null=True)
     last_name = models.CharField(max_length=30, blank=True, null=True)
     email = models.EmailField(max_length=255, unique=True)
-    active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
 #   an admin user; non super-user
     staff = models.BooleanField(default=False)
 #   a superuser
     admin = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+#   USERNAME_FIELD and password are required by default
+    REQUIRED_FIELDS = ["first_name", "last_name"]  # ['first_name', 'last_name'] # python manage.py createsuperuser
 
     object = UserManager()
 
@@ -126,6 +91,16 @@ class User(AbstractBaseUser):
     def get_short_name(self):
         return self.email
 
+    def has_perm(self, perm, obj=None):
+        """Does the user have a specific permission?"""
+        # Simplest possible answer: Yes, always
+        return True
+
+    def has_module_perms(self, app_label):
+        """Does the user have permissions to view the app `app_label`?"""
+        # Simplest possible answer: Yes, always
+        return True
+
     @property
     def is_staff(self):
         """Is the user a member of staff?"""
@@ -135,3 +110,36 @@ class User(AbstractBaseUser):
     def is_admin(self):
         """Is the user an admin member?"""
         return self.admin
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=150, unique=True)
+
+
+class Institution(models.Model):
+    TYPECHOICE = {
+        (1, 'Fundacja'),
+        (2, 'Organizacja pozarządowa'),
+        (3, 'Zbiórka lokalna'),
+    }
+
+    name = models.CharField(max_length=250, unique=True)
+    description = models.TextField()
+    type = models.IntegerField(choices=TYPECHOICE, default=1, null=True, blank=True)
+    categories = models.ManyToManyField(Category, blank=True)
+
+
+class Donation(models.Model):
+    quantity = models.IntegerField(verbose_name='liczba worków')
+    categories = models.ManyToManyField(Category, blank=True)
+    institution = models.ForeignKey(Institution,
+                                    on_delete=models.CASCADE,
+                                    null=True)
+    address = models.CharField(max_length=256)
+    phone_number = models.CharField(max_length=16, verbose_name='numer telefonu')
+    city = models.CharField(max_length=128, verbose_name='miasto')
+    zip_code = models.CharField(max_length=6, verbose_name='kod pocztowy')
+    pick_up_date = models.DateField(auto_now_add=True, verbose_name='data odbioru')
+    pick_up_time = models.DateTimeField(auto_now_add=True, verbose_name='godzina odbioru')
+    pick_up_comment = models.TextField(null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

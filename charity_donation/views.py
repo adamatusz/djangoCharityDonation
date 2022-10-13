@@ -1,6 +1,9 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 from django.contrib.auth import (authenticate,
                                  login,
                                  logout)
+from .models import User
 from django.db.models import Sum
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
@@ -12,18 +15,34 @@ from .forms import (SignUpForm,
 # Create your views here.
 from django.views import View
 
-from charity_donation.models import Institution, Donation, User
+from .models import (Institution,
+                     Donation)
+
+PAGINATION_OBJECTS_PER_PAGE = 5
 
 
 class LandingPageView(View):
+
+    def first_page(self, institution_type):
+        paginator = Paginator(Institution.objects.filter(type=institution_type), PAGINATION_OBJECTS_PER_PAGE)
+        return paginator.page(1)
+
     def get(self, request):
         donated_institutions = Institution.objects.all().filter(donation__quantity__gt=0).distinct().count()
         total_donated = Donation.objects.all().count()
         # total_donated = Donation.objects.all().aggregate(Sum('quantity'))
 
+        get_type_num_by_type_name = {value: key for key, value in Institution.TYPECHOICE}
+        foundations = self.first_page(institution_type=get_type_num_by_type_name.get('Fundacja'))
+        ngos = self.first_page(institution_type=get_type_num_by_type_name.get('Organizacja pozarządowa'))
+        local_collections = self.first_page(institution_type=get_type_num_by_type_name.get('Zbiórka lokalna'))
+
         context = {
             "donated_institutions": donated_institutions,
-            'total_donated': total_donated
+            'total_donated': total_donated,
+            'foundations': foundations,
+            'ngos': ngos,
+            'local_collections': local_collections
         }
 
         return render(request, 'index.html', context)
@@ -88,28 +107,14 @@ class RegisterView(View):
 #     return render(request, 'register.html', context={'form': form})
 
 
-class UserProfil(View):
+class UserProfile(View):
     def get(self, request):
-        user = User.objects.get(email=request.user.email)
-        bags = Donation.objects.filter(user=user).aggregate(Sum('quantity'))
-        institutions = Institution.objects.filter(donation__user=user)
-        foundations = institutions.filter(type=0)
-        non_government_organization = institutions.filter(type=1)
-        community_collection = institutions.filter(type=2)
-        donations = Donation.objects.filter(user=user)
-        context = {
-            "donations": donations,
-            "user": user,
-            "bags": bags,
-            "foundations": foundations,
-            "non_government_organization": non_government_organization,
-            "community_collection": community_collection,
-        }
-        return render(request, "index.html", context)
+        form = UserCreationForm()
+        return render(request, 'user_profile.html', context={form: form})
 
-    def post(self, request):
-        donation_id = request.POST.get('id')
-        donation = Donation.objects.get(id=donation_id)
-        donation.is_taken = True
-        donation.save()
-        return redirect('profile')
+
+class LogoutUser(View):
+    def get(self, request):
+        logout(request)
+        # messages.success(request, ('You Have Been Logged Out...'))
+        return redirect('landing-page')
