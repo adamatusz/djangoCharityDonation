@@ -2,10 +2,16 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pl">
+
 <body>
 {% block content %}
-
+    <div  class="float-right">
+        <p>
+            <a href="{% url "landing-page" %}" class="btn btn-sm btn-link" >Start</a>
+        </p>
+    </div>
         <h2>Profil Użytkownika</h2>
+
 
     {%  if user.is_authenticated %}
 
@@ -14,6 +20,7 @@
 {#        <p>is_active: {{ user.is_active }}</p>#}
 
     {% endif %}
+
 
 {% endblock %}
 </body>
